@@ -1,0 +1,53 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functies
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // Gebruikersprofielen: Alleen de eigenaar kan lezen/schrijven
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && isOwner(userId);
+    }
+
+    // Content: Iedereen (ingelogd) kan lezen, niemand kan schrijven (behalve admin via dashboard)
+    match /cards/{cardId} {
+      allow read: if isSignedIn();
+      allow write: if false; // Admin only
+    }
+    match /knowledge/{itemId} {
+      allow read: if isSignedIn();
+      allow write: if false; 
+    }
+    match /recipes/{recipeId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+    match /exercises/{exerciseId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // Progressie & Interactie: Alleen de eigenaar
+    match /cardCompletions/{id} {
+      allow read, write: if isSignedIn() && request.resource.data.uid == request.auth.uid;
+    }
+    match /favorites/{userId}/recipes/{recipeId} {
+      allow read, write: if isSignedIn() && isOwner(userId);
+    }
+    match /chats/{userId}/messages/{msgId} {
+      allow read, write: if isSignedIn() && isOwner(userId);
+    }
+
+    // Leads (contactformulier): Iedereen kan schrijven
+    match /leads/{leadId} {
+      allow create: if true;
+      allow read: if false;
+    }
+  }
+}

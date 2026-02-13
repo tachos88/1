@@ -1,0 +1,14 @@
+
+{
+  "name": "FLO8 - Leefstijl Coaching",
+  "short_name": "FLO8",
+  "description": "Een persoonlijke coaching app voor meer rust, beweging en balans. Met interactieve dagkaarten en AI coach.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafaf9",
+  "theme_color": "#0d9488",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
